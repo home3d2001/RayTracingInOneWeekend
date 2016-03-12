@@ -150,13 +150,17 @@
   <ItemGroup>
     <ClCompile Include="hitablelist.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="material.cpp" />
+    <ClCompile Include="sampler.cpp" />
     <ClCompile Include="sphere.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
     <ClInclude Include="hitable.h" />
     <ClInclude Include="hitablelist.h" />
+    <ClInclude Include="material.h" />
     <ClInclude Include="ray.h" />
+    <ClInclude Include="sampler.h" />
     <ClInclude Include="sphere.h" />
     <ClInclude Include="vec3.h" />
   </ItemGroup>
