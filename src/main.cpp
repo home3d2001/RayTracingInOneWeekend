@@ -1,9 +1,21 @@
 #include <iostream>
 #include "ray.h"
 
+bool hitSphere(const vec3& center, float radius, const ray& r) {
+	const vec3 oc = r.origin() - center;
+	const float a = dot(r.direction(), r.direction());
+	const float b = 2.0f * dot(oc, r.direction());
+	const float c = dot(oc, oc) - radius * radius;
+	const float discriminant = b * b - 4.0f * a * c;
+	return discriminant > 0;
+}
+
 vec3 color(const ray& r) {
-	vec3 unit_direction = make_unit_vector(r.direction());
-	float t = 0.5f * (unit_direction.y() + 1.0f);
+	if (hitSphere(vec3(0.0f, 0.0f, -1.0f), 0.5f, r)) {
+		return vec3(1.0f, 0.0f, 0.0f);
+	}
+	vec3 unitDirection = makeUnitVector(r.direction());
+	float t = 0.5f * (unitDirection.y() + 1.0f);
 	return (1.0f - t) * vec3(1.0f, 1.0f, 1.0f) + t * vec3(0.5f, 0.7f, 1.0f);
 }
 

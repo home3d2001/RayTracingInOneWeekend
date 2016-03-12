@@ -76,9 +76,9 @@ public:
 	}
 
 	inline float length() const {
-		return std::sqrt(squared_length());
+		return std::sqrt(squaredLength());
 	}
-	inline float squared_length() const {
+	inline float squaredLength() const {
 		return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
 	}
 
@@ -115,7 +115,7 @@ inline vec3 operator/(vec3 lhs, const float rhs) {
 	return lhs;
 }
 
-inline vec3 make_unit_vector(vec3 v) {
+inline vec3 makeUnitVector(vec3 v) {
 	return v / v.length();
 }
 
