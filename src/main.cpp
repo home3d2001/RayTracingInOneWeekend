@@ -1,5 +1,7 @@
 #include <iostream>
 #include <limits>
+#include <random>
+#include "camera.h"
 #include "sphere.h"
 #include "hitableList.h"
 
@@ -16,8 +18,13 @@ vec3 color(const Ray& r, Hitable* world) {
 }
 
 int main() {
-	const int nx = 1200;
-	const int ny = 600;
+	const int nx = 200;
+	const int ny = 100;
+	const int ns = 100;
+
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<> dis(0.0f, 1.0f);
 
 	std::cout << "P3\n" 
 			  << nx << " " << ny 
@@ -34,12 +41,20 @@ int main() {
 
 	Hitable* world = new HitableList(list, 2);
 
+	Camera camera;
 	for (int j = ny - 1; j >= 0; j--) {
 		for (int i = 0; i < nx; i++) {
-			const float u = float(i) / float(nx);
-			const float v = float(j) / float(ny);
-			const Ray r(origin, lowerLeftCorner + u * horizontal + v * vertical);
-			const vec3 col = color(r, world);
+			vec3 col(0.0f, 0.0f, 0.0f);
+
+			for (int s = 0; s < ns; ++s) {
+				const float u = float(i + dis(gen)) / float(nx);
+				const float v = float(j + dis(gen)) / float(ny);
+				const Ray r = camera.getRay(u, v);
+				col += color(r, world);
+			}
+
+			col /= float(ns);
+
 			const int ir = int(255.99 * col.r());
 			const int ig = int(255.99 * col.g());
 			const int ib = int(255.99 * col.b());
