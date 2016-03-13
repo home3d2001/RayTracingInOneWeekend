@@ -41,12 +41,13 @@ int main() {
 	const vec3 vertical(0.0f, 2.0f, 0.0f);
 	const vec3 origin(0.0f, 0.0f, 0.0f);
 
-	static const int sphereCount = 4;
+	static const int sphereCount = 5;
 	Hitable* list[sphereCount] = { nullptr };
 	list[0] = new Sphere(vec3(0.0f, 0.0f, -1.0f), 0.5f, new Lambertian(vec3(0.1f, 0.2f, 0.5f)));
 	list[1] = new Sphere(vec3(0.0f, -100.5f, -1.0f), 100, new Lambertian(vec3(0.8f, 0.8f, 0.0f)));
 	list[2] = new Sphere(vec3(1.0f, 0.0f, -1.0f), 0.5f, new Metal(vec3(0.8f, 0.6f, 0.2f), 0.0f));
 	list[3] = new Sphere(vec3(-1.0f, 0.0f, -1.0f), 0.5f, new Dielectric(1.5f));
+	list[4] = new Sphere(vec3(-1.0f, 0.0f, -1.0f), -0.45f, new Dielectric(1.5f));
 
 	Hitable* world = new HitableList(list, sphereCount);
 

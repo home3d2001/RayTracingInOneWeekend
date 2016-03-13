@@ -19,7 +19,7 @@ bool Metal::scatter(const Ray& ray, const hitRecord& rec, UniformRandomSampler& 
 	return dot(scattered.direction(), rec.normal) > 0.0f;
 }
 
-static float schilick(float cosine, float refIdx) {
+static float schlick(float cosine, float refIdx) {
 	float r0 = (1.0f - refIdx) / (1.0f + refIdx);
 	r0 = r0 * r0;
 	return r0 + (1.0f - r0) * std::pow((1.0f - cosine), 5.0f);
@@ -45,21 +45,32 @@ bool Dielectric::scatter(const Ray& ray, const hitRecord& rec, UniformRandomSamp
 	float niOverNt = 0.0f;
 	attenuation = vec3(1.0f, 1.0f, 1.0f);
 	vec3 refracted;
+	float reflectProb;
+	float cosine;
 	if (dot(ray.direction(), rec.normal) > 0) {
 		outwardNormal = -rec.normal;
 		niOverNt = refractiveIndex;
+		cosine = refractiveIndex * dot(ray.direction(), rec.normal) / ray.direction().length();
 	}
 	else {
 		outwardNormal = rec.normal;
 		niOverNt = 1.0f / refractiveIndex;
+		cosine = -dot(ray.direction(), rec.normal) / ray.direction().length();
 	}
 
 	if (refract(ray.direction(), outwardNormal, niOverNt, refracted)) {
-		scattered = Ray(rec.p, refracted);
+		reflectProb = schlick(cosine, refractiveIndex);
 	}
 	else {
 		scattered = Ray(rec.p, reflected);
-		return false;
+		reflectProb = 1.0;
+	}
+
+	if (sampler.getNextSample() < reflectProb) {
+		scattered = Ray(rec.p, reflected);
+	}
+	else {
+		scattered = Ray(rec.p, refracted);
 	}
 	return true;
 }
