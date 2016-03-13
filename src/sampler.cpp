@@ -8,3 +8,11 @@ vec3 randomInUnitSphere(UniformRandomSampler& sampler) {
 	} while (dot(p, p) >= 1.0);
 	return p;
 }
+
+vec3 randomInUnitDisk(UniformRandomSampler& sampler) {
+	vec3 p;
+	do {
+		p = 2.0f * vec3(sampler.getNextSample(), sampler.getNextSample(), 0.0f) - vec3(1.0f, 1.0f, 0.0f);
+	} while (dot(p, p) >= 1.0);
+	return p;
+}

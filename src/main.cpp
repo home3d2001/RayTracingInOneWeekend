@@ -49,7 +49,11 @@ int main() {
 
 	UniformRandomSampler sampler;
 
-	Camera camera(vec3(-2.0f, 2.0f, 1.0f), vec3(0.0f, 0.0f, -1.0f), vec3(0.0f, 1.0f, 0.0f), 90, float(nx) / float(ny));
+	vec3 lookFrom(3, 3, 2);
+	vec3 lookAt(0.0f, 0.0f, -1.0f);
+	const float apeture = 2.0f;
+	const float distToFocus = (lookFrom - lookAt).length();
+	Camera camera(lookFrom, lookAt, vec3(0.0f, 1.0f, 0.0f), 20, float(nx) / float(ny), apeture, distToFocus);
 	for (int j = ny - 1; j >= 0; j--) {
 		for (int i = 0; i < nx; i++) {
 			vec3 col(0.0f, 0.0f, 0.0f);
@@ -57,7 +61,7 @@ int main() {
 			for (int s = 0; s < ns; ++s) {
 				const float u = float(i + sampler.getNextSample()) / float(nx);
 				const float v = float(j + sampler.getNextSample()) / float(ny);
-				const Ray r = camera.getRay(u, v);
+				const Ray r = camera.getRay(u, v, sampler);
 				col += color(r, world, sampler, 0);
 			}
 

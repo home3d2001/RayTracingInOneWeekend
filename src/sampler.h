@@ -17,3 +17,4 @@ struct UniformRandomSampler {
 };
 
 vec3 randomInUnitSphere(UniformRandomSampler& sampler);
+vec3 randomInUnitDisk(UniformRandomSampler& sampler);
