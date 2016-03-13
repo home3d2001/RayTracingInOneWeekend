@@ -54,9 +54,9 @@ static Hitable* munsellColorChart() {
 }
 
 int main() {
-	const int nx = 200;
-	const int ny = 100;
-	const int ns = 50;
+	const int nx = 1280;
+	const int ny = 720;
+	const int ns = 1000;
 
 	std::cout << "P3\n" 
 			  << nx << " " << ny 
@@ -66,11 +66,11 @@ int main() {
 
 	UniformRandomSampler sampler;
 
-	vec3 lookFrom(2.5f, 1.5f, 8.0f);
+	vec3 lookFrom(-4.949f, 1.5f, 6.36f);
 	vec3 lookAt(2.5f, 1.5f, 0.0f);
-	const float apeture = 2.0f;
+	const float apeture = 0.5f;
 	const float distToFocus = (lookFrom - lookAt).length();
-	Camera camera(lookFrom, lookAt, vec3(0.0f, 1.0f, 0.0f), 35, float(nx) / float(ny), apeture, distToFocus);
+	Camera camera(lookFrom, lookAt, vec3(0.0f, 1.0f, 0.0f), 30, float(nx) / float(ny), apeture, distToFocus);
 	for (int j = ny - 1; j >= 0; j--) {
 		for (int i = 0; i < nx; i++) {
 			vec3 col(0.0f, 0.0f, 0.0f);
