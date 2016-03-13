@@ -14,6 +14,12 @@ public:
 		e[2] = e2;
 	}
 
+	explicit vec3(int r, int g, int b) {
+		e[0] = r / 255.0f;
+		e[1] = g / 255.0f;
+		e[2] = b / 255.0f;
+	}
+
 	vec3(float e0) {
 		e[0] = e0;
 		e[1] = e0;
@@ -133,4 +139,8 @@ inline vec3 cross(const vec3& v1, const vec3& v2) {
 
 inline vec3 reflect(const vec3& v, const vec3& n) {
 	return v - 2.0f * dot(v, n) * n;
+}
+
+inline vec3 gammaCorrect(const vec3& v, float gamma) {
+	return vec3(std::pow(v.r(), gamma), std::pow(v.g(), gamma), std::pow(v.b(), gamma));
 }
