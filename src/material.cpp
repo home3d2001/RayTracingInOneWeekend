@@ -27,11 +27,12 @@ static float schilick(float cosine, float refIdx) {
 
 static bool refract(const vec3& v, const vec3& n, float niOverNt, vec3& refracted) {
 	const vec3 uv = normalize(v);
-	const float dt = dot(uv, n);
+	const vec3 un = normalize(n);
+	const float dt = dot(uv, un);
 	float discriminant = 1.0f - niOverNt * niOverNt * (1.0f - dt * dt);
 
 	if (discriminant > 0.0f) {
-		refracted = niOverNt * (v - n * dt) - n * std::sqrt(discriminant);
+		refracted = niOverNt * (uv - un * dt) - un * std::sqrt(discriminant);
 		return true;
 	}
 
