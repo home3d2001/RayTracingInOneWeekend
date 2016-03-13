@@ -115,7 +115,7 @@ inline vec3 operator/(vec3 lhs, const float rhs) {
 	return lhs;
 }
 
-inline vec3 makeUnitVector(vec3 v) {
+inline vec3 normalize(vec3 v) {
 	return v / v.length();
 }
 

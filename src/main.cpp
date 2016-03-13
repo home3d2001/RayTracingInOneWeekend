@@ -9,7 +9,7 @@
 
 vec3 color(const Ray& r, Hitable* world, UniformRandomSampler& sampler, int depth) {
 	hitRecord rec;
-	if (world->hit(r, 0.0f, std::numeric_limits<float>::max(), rec)) {
+	if (world->hit(r, 0.001f, std::numeric_limits<float>::max(), rec)) {
 		Ray scattered;
 		vec3 attenuation;
 
@@ -21,7 +21,7 @@ vec3 color(const Ray& r, Hitable* world, UniformRandomSampler& sampler, int dept
 		}
 	}
 	else {
-		vec3 unitDirection = makeUnitVector(r.direction());
+		vec3 unitDirection = normalize(r.direction());
 		float t = 0.5f * (unitDirection.y() + 1.0f);
 		return (1.0f - t) * vec3(1.0f, 1.0f, 1.0f) + t * vec3(0.5f, 0.7f, 1.0f);
 	}
@@ -30,7 +30,7 @@ vec3 color(const Ray& r, Hitable* world, UniformRandomSampler& sampler, int dept
 int main() {
 	const int nx = 200;
 	const int ny = 100;
-	const int ns = 500;
+	const int ns = 100;
 
 	std::cout << "P3\n" 
 			  << nx << " " << ny 
@@ -43,10 +43,10 @@ int main() {
 
 	static const int sphereCount = 4;
 	Hitable* list[sphereCount] = { nullptr };
-	list[0] = new Sphere(vec3(0.0f, 0.0f, -1.0f), 0.5f, new Lambertian(vec3(0.8f, 0.3f, 0.3f)));
+	list[0] = new Sphere(vec3(0.0f, 0.0f, -1.0f), 0.5f, new Lambertian(vec3(0.1f, 0.2f, 0.5f)));
 	list[1] = new Sphere(vec3(0.0f, -100.5f, -1.0f), 100, new Lambertian(vec3(0.8f, 0.8f, 0.0f)));
-	list[2] = new Sphere(vec3(1.0f, 0.0f, -1.0f), 0.5f, new Metal(vec3(0.8f, 0.6f, 0.2f), 1.0f));
-	list[3] = new Sphere(vec3(-1.0f, 0.0f, -1.0f), 0.5f, new Metal(vec3(0.8f, 0.8f, 0.8f), 0.3f));
+	list[2] = new Sphere(vec3(1.0f, 0.0f, -1.0f), 0.5f, new Metal(vec3(0.8f, 0.6f, 0.2f), 0.0f));
+	list[3] = new Sphere(vec3(-1.0f, 0.0f, -1.0f), 0.5f, new Dielectric(1.5f));
 
 	Hitable* world = new HitableList(list, sphereCount);
 

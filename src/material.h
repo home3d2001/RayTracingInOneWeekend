@@ -35,3 +35,11 @@ public:
 	float roughness;
 };
 
+class Dielectric : public Material {
+public:
+	Dielectric(float ri) : refractiveIndex(ri) {}
+	virtual bool scatter(const Ray& ray, const hitRecord& rec, UniformRandomSampler& sampler, vec3& attenuation, Ray& scattered) const override;
+
+	float refractiveIndex;
+};
+
