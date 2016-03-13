@@ -37,7 +37,6 @@ int main() {
 			  << nx << " " << ny 
 			  << "\n255\n";
 
-	/*
 	static const int sphereCount = 5;
 	Hitable* list[sphereCount] = { nullptr };
 	list[0] = new Sphere(vec3(0.0f, 0.0f, -1.0f), 0.5f, new Lambertian(vec3(0.1f, 0.2f, 0.5f)));
@@ -45,18 +44,12 @@ int main() {
 	list[2] = new Sphere(vec3(1.0f, 0.0f, -1.0f), 0.5f, new Metal(vec3(0.8f, 0.6f, 0.2f), 0.0f));
 	list[3] = new Sphere(vec3(-1.0f, 0.0f, -1.0f), 0.5f, new Dielectric(1.5f));
 	list[4] = new Sphere(vec3(-1.0f, 0.0f, -1.0f), -0.45f, new Dielectric(1.5f));
-	*/
-	const float R = (float)std::cos(M_PI_4);
-	static const int sphereCount = 2;
-	Hitable* list[sphereCount] = { nullptr };
-	list[0] = new Sphere(vec3(-R, 0.0f, -1.0f), R, new Lambertian(vec3(0.0f, 0.0f, 1.0f)));
-	list[1] = new Sphere(vec3(R, 0.0f, -1.0f), R, new Lambertian(vec3(1.0f, 0.0f, 0.0f)));
 
 	Hitable* world = new HitableList(list, sphereCount);
 
 	UniformRandomSampler sampler;
 
-	Camera camera(90, float(nx) / float(ny));
+	Camera camera(vec3(-2.0f, 2.0f, 1.0f), vec3(0.0f, 0.0f, -1.0f), vec3(0.0f, 1.0f, 0.0f), 90, float(nx) / float(ny));
 	for (int j = ny - 1; j >= 0; j--) {
 		for (int i = 0; i < nx; i++) {
 			vec3 col(0.0f, 0.0f, 0.0f);
@@ -83,4 +76,7 @@ int main() {
 	delete world;
 	delete list[0];
 	delete list[1];
+	delete list[2];
+	delete list[3];
+	delete list[4];
 }
