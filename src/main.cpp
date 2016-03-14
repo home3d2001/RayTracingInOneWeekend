@@ -2,6 +2,7 @@
 #include <cmath>
 #include <iostream>
 #include <limits>
+#include <vector>
 #include "camera.h"
 #include "hitableList.h"
 #include "material.h"
@@ -32,8 +33,9 @@ static Hitable* munsellColorChart() {
 	int rows = 4;
 	int columns = 6;
 	int sphereCount = (rows * columns) + 1;
-	Hitable** list = new Hitable*[sphereCount];
-	list[0] = new Sphere(vec3(0.0f, -100.5f, -1.0f), 100, new Lambertian(vec3(0.8f, 0.8f, 0.8f)));
+
+	std::vector<Hitable*> list;
+	list.push_back(new Sphere(vec3(0.0f, -100.5f, -1.0f), 100, new Lambertian(vec3(0.8f, 0.8f, 0.8f))));
 
 	static vec3 munsellChartColors[24] = {
 		vec3(225,222,220), vec3(201,201,201), vec3(172,171,171), vec3(129,132,130), vec3(85,85,85), vec3(53,52,52),
@@ -42,21 +44,21 @@ static Hitable* munsellColorChart() {
 		vec3(96, 71, 62), vec3(182,146,134), vec3(96,122,157), vec3(94,108,57), vec3(138,136,177), vec3(141,192,181)
 	};
 	
-	float sphereRadius = 0.5f;
-	int i = 1;
+	const float sphereRadius = 0.5f;
+	int i = 0;
 	for (int y = 0; y < rows; ++y) {
 		for (int x = 0; x < columns; ++x) {
-			list[i++] = new Sphere(vec3(x * sphereRadius * 2.0f, y * sphereRadius * 2.0f, 0.0f), sphereRadius, new Lambertian(munsellChartColors[i-1]));
+			list.push_back(new Sphere(vec3(x * sphereRadius * 2.0f, y * sphereRadius * 2.0f, 0.0f), sphereRadius, new Lambertian(munsellChartColors[i++])));
 		}
 	}
 
-	return new HitableList(list, sphereCount);
+	return new HitableList(list);
 }
 
 int main() {
-	const int nx = 1280;
-	const int ny = 720;
-	const int ns = 1000;
+	const int nx = 200;
+	const int ny = 100;
+	const int ns = 10;
 
 	std::cout << "P3\n" 
 			  << nx << " " << ny 
@@ -95,5 +97,4 @@ int main() {
 	}
 
 	delete world;
-	// need to properly delete everything else.
 }

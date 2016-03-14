@@ -1,12 +1,13 @@
 #pragma once
+#include <vector>
 #include "hitable.h"
 
 class HitableList : public Hitable {
 public:
-	HitableList() : list(nullptr), listSize(0) {}
-	HitableList(Hitable** l, int n) : list(l), listSize(n) {}
+	HitableList() : list() {}
+	HitableList(std::vector<Hitable*>& l) : list(l) {}
+	virtual ~HitableList();
 	virtual bool hit(const Ray& r, float tMin, float tMax, hitRecord& rec) const override;
 
-	Hitable** list;
-	int listSize;
+	std::vector<Hitable*> list;
 };
