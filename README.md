@@ -3,6 +3,8 @@ Ray Tracing In One Weekend
 
 My implementation of Peter Shirley's Ray Tracing In One Weekend book.  It can be found on Amazon [here](http://www.amazon.com/Ray-Tracing-Weekend-Peter-Shirley-ebook/dp/B01B5AODD8/).
 
+<img align="left" src="https://github.com/jnadro/RayTracingInOneWeekend/blob/master/munsell.png">
+
 
 Features
 --------
