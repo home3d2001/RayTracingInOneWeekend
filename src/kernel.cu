@@ -6,6 +6,10 @@
 #include <assert.h>
 #include <stdio.h>
 
+// GLAD
+#include <glad/glad.h>
+
+// GLFW
 #include <GLFW/glfw3.h>
 
 #define M_PI 3.14159265359f
@@ -94,6 +98,71 @@ cudaError_t clearImageWithCuda(float3 color, float3* hostPixels, unsigned int si
 	return cudaSuccess;
 }
 
+class FullScreenQuad {
+public:
+	FullScreenQuad() {
+        static const char * vs_source[] =
+        {
+            "#version 420 core                                                 \n"
+            "                                                                  \n"
+            "void main(void)                                                   \n"
+            "{                                                                 \n"
+            "    const vec4 vertices[] = vec4[](vec4( 0.25, -0.25, 0.5, 1.0),  \n"
+            "                                   vec4(-0.25, -0.25, 0.5, 1.0),  \n"
+            "                                   vec4( 0.25,  0.25, 0.5, 1.0)); \n"
+            "                                                                  \n"
+            "    gl_Position = vertices[gl_VertexID];                          \n"
+            "}                                                                 \n"
+        };
+
+        static const char * fs_source[] =
+        {
+            "#version 420 core                                                 \n"
+            "                                                                  \n"
+            "out vec4 color;                                                   \n"
+            "                                                                  \n"
+            "void main(void)                                                   \n"
+            "{                                                                 \n"
+            "    color = vec4(0.0, 0.8, 1.0, 1.0);                             \n"
+            "}                                                                 \n"
+        };
+
+        program = glCreateProgram();
+        GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
+        glShaderSource(fs, 1, fs_source, NULL);
+        glCompileShader(fs);
+
+        GLuint vs = glCreateShader(GL_VERTEX_SHADER);
+        glShaderSource(vs, 1, vs_source, NULL);
+        glCompileShader(vs);
+
+        glAttachShader(program, vs);
+        glAttachShader(program, fs);
+
+        glLinkProgram(program);
+
+        glGenVertexArrays(1, &vao);
+        glBindVertexArray(vao);
+	}
+
+	~FullScreenQuad() {
+		glDeleteVertexArrays(1, &vao);
+		glDeleteProgram(program);
+	}
+
+	void draw() {
+	    static const GLfloat green[] = { 0.0f, 0.25f, 0.0f, 1.0f };
+        glClearBufferfv(GL_COLOR, 0, green);
+
+        glUseProgram(program);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+	}
+
+private:
+	GLuint program;
+	GLuint vao;
+};
+
 int main()
 {
 	const int nx = 1280;
@@ -101,6 +170,10 @@ int main()
 
     if (!glfwInit())
         return -1;
+
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
 	GLFWwindow* window = glfwCreateWindow(nx, ny, "cudaRayTracer", NULL, NULL);
     if (!window)
@@ -110,6 +183,10 @@ int main()
     }
 
 	glfwMakeContextCurrent(window);
+
+	if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+        return -1;
+    }
 
 	float3* pixels = new float3[nx * ny];
 
@@ -129,8 +206,10 @@ int main()
 	fclose(f);
 	delete[] pixels;
 
-    while (!glfwWindowShouldClose(window))
-    {
+	FullScreenQuad quad;
+
+    while (!glfwWindowShouldClose(window)) {
+		quad.draw();
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
