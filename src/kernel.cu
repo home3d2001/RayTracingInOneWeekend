@@ -102,6 +102,15 @@ int main()
     if (!glfwInit())
         return -1;
 
+	GLFWwindow* window = glfwCreateWindow(nx, ny, "cudaRayTracer", NULL, NULL);
+    if (!window)
+    {
+        glfwTerminate();
+        return -1;
+    }
+
+	glfwMakeContextCurrent(window);
+
 	float3* pixels = new float3[nx * ny];
 
 	cudaError_t cudaStatus = clearImageWithCuda(make_float3(1.0f, 0.0f, 1.0f), pixels, nx, ny);
@@ -120,7 +129,15 @@ int main()
 	fclose(f);
 	delete[] pixels;
 
+    while (!glfwWindowShouldClose(window))
+    {
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
+
     VERIFY_CUDA(cudaDeviceReset());
+
+	glfwTerminate();
 
     return 0;
 }
