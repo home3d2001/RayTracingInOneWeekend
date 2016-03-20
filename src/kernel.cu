@@ -105,25 +105,25 @@ public:
         {
             "#version 420 core                                                 \n"
             "                                                                  \n"
+			"out vec2 uv;                                                      \n"
+            "                                                                  \n"
             "void main(void)                                                   \n"
             "{                                                                 \n"
-            "    const vec4 vertices[] = vec4[](vec4( 0.25, -0.25, 0.5, 1.0),  \n"
-            "                                   vec4(-0.25, -0.25, 0.5, 1.0),  \n"
-            "                                   vec4( 0.25,  0.25, 0.5, 1.0)); \n"
-            "                                                                  \n"
-            "    gl_Position = vertices[gl_VertexID];                          \n"
+			"    uv = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);           \n"
+			"    gl_Position = vec4(uv * vec2(2,-2) + vec2(-1,1), 0, 1);       \n"
             "}                                                                 \n"
         };
 
         static const char * fs_source[] =
         {
             "#version 420 core                                                 \n"
+			"in vec2 uv;                                                       \n"
             "                                                                  \n"
             "out vec4 color;                                                   \n"
             "                                                                  \n"
             "void main(void)                                                   \n"
             "{                                                                 \n"
-            "    color = vec4(0.0, 0.8, 1.0, 1.0);                             \n"
+            "    color = vec4(uv.x, uv.y, 0.0, 1.0);                           \n"
             "}                                                                 \n"
         };
 
@@ -131,10 +131,31 @@ public:
         GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
         glShaderSource(fs, 1, fs_source, NULL);
         glCompileShader(fs);
+		GLint params;
+		glGetShaderiv(fs, GL_COMPILE_STATUS, &params);
+		if (params == GL_FALSE) {
+			GLint infoLogLength;
+			glGetShaderiv(fs, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+			GLchar* strInfoLog = new GLchar[infoLogLength + 1];
+			glGetShaderInfoLog(fs, infoLogLength, NULL, strInfoLog);
+			printf("%s", strInfoLog);
+			delete strInfoLog;
+		}
 
         GLuint vs = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vs, 1, vs_source, NULL);
         glCompileShader(vs);
+		glGetShaderiv(vs, GL_COMPILE_STATUS, &params);
+		if (params == GL_FALSE) {
+			GLint infoLogLength;
+			glGetShaderiv(vs, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+			GLchar* strInfoLog = new GLchar[infoLogLength + 1];
+			glGetShaderInfoLog(vs, infoLogLength, NULL, strInfoLog);
+			printf("%s", strInfoLog);
+			delete strInfoLog;
+		}
 
         glAttachShader(program, vs);
         glAttachShader(program, fs);
