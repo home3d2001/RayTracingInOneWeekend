@@ -12,6 +12,18 @@ __global__ void clearPixels(float3* pixels, const unsigned int sizeX, const unsi
 	 pixels[y * sizeX + x] = make_float3(103 / 255.0f, 189 / 255.0f, 170 / 255.0f);
 }
 
+__global__ void randomPixels(float3* pixels, const unsigned int sizeX, const unsigned int sizeY) {
+	 unsigned int x = blockIdx.x * blockDim.x + threadIdx.x;   
+	 unsigned int y = blockIdx.y * blockDim.y + threadIdx.y;
+
+	 unsigned int idx = y * sizeX + x;
+
+	 curandState randState;
+	 curand_init(idx, 0, 0, &randState);
+
+	 pixels[idx] = make_float3(curand_uniform(&randState), curand_uniform(&randState), curand_uniform(&randState));
+}
+
 #define VERIFY_CUDA(x) \
 { \
 	cudaError_t cudaStatus = (x); \
@@ -32,7 +44,7 @@ cudaError_t clearImageWithCuda(float3 color, float3* hostPixels, unsigned int si
 
 	dim3 block(16, 16, 1);
 	dim3 grid(sizeX / block.x, sizeY / block.y, 1);
-	clearPixels<<<grid, block>>>(devicePixels, sizeX, sizeY);
+	randomPixels<<<grid, block>>>(devicePixels, sizeX, sizeY);
 	VERIFY_CUDA(cudaGetLastError());
 	VERIFY_CUDA(cudaDeviceSynchronize());
 	VERIFY_CUDA(cudaMemcpy(hostPixels, devicePixels, byteCount, cudaMemcpyDeviceToHost));
